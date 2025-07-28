@@ -29,12 +29,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
     } else if (index == 2 && widget.selectedIndex != 2) {
       Navigator.pushReplacementNamed(context, '/map');
     } else if (index == 3 && widget.selectedIndex != 3) {
-      // Ganti '/profile' jika ada halaman profile
-      // Navigator.pushReplacementNamed(context, '/profile');
-      // Untuk demo, tampilkan snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Profile menu belum tersedia')),
-      );
+      Navigator.pushReplacementNamed(context, '/profile');
     }
   }
 

@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_navbar.dart';
+import 'car_detail_screen.dart';
 
 class CarSearchScreen extends StatelessWidget {
   final List<Map<String, dynamic>> cars = [
     {
-      'image':
-          'https://www.google.com/url?sa=i&url=https%3A%2F%2Fcarsgallery.co.id%2Fblog%2Fmobil-keluarga-besar-2%2F&psig=AOvVaw1h0lKobAYW9_uYvLRxaFut&ust=1753784127927000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCIjFx-ba344DFQAAAAAdAAAAABAE',
+      'image': 'assets/mobil.jpeg',
       'name': 'Daihatsu Xenia 2022 R 1.3',
       'location': 'Jalan ferrari blok AB 34, Sidoarjo',
       'price': 'Rp350.000/hari',
       'rating': 4.9,
     },
     {
-      'image':
-          'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.oto.com%2Fmobil-baru%2Ftoyota&psig=AOvVaw1h0lKobAYW9_uYvLRxaFut&ust=1753784127927000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCIjFx-ba344DFQAAAAAdAAAAABAL',
+      'image': 'assets/mobil2.jpeg',
+      'name': 'Toyota Innova G REBORN 2018',
+      'location': 'Jalan Kenari no 77 Surabaya',
+      'price': 'Rp500.000/hari',
+      'rating': 4.5,
+    },
+    {
+      'image': 'assets/mobil1.jpeg',
       'name': 'Toyota Innova G REBORN 2018',
       'location': 'Jalan Kenari no 77 Surabaya',
       'price': 'Rp500.000/hari',
@@ -85,20 +91,30 @@ class CarSearchScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(18)),
-                          child: Image.network(
-                            car['image'],
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CarDetailScreen(car: car),
+                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(18)),
+                            child: Image.asset(
+                              car['image'],
                               height: 150,
-                              color: Colors.grey[300],
-                              child: Icon(Icons.broken_image,
-                                  size: 48, color: Colors.grey[600]),
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                height: 150,
+                                color: Colors.grey[300],
+                                child: Icon(Icons.broken_image,
+                                    size: 48, color: Colors.grey[600]),
+                              ),
                             ),
                           ),
                         ),

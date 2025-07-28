@@ -5,6 +5,7 @@ import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/car_search_screen.dart';
+import 'screens/profile_screen.dart';
 import 'routes/app_routes.dart';
 
 void main() {
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.home: (context) => HomeScreen(),
         '/car-search': (context) => CarSearchScreen(),
         '/map': (context) => MapScreen(),
+        '/profile': (context) => ProfileScreen(),
       },
     );
   }
