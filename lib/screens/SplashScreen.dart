@@ -1,6 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'login.dart';
+import 'login_screen.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -117,11 +117,7 @@ class SplashScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
+                      Navigator.pushReplacementNamed(context, '/login');
                     },
                     child: const Text(
                       'GET STARTED',

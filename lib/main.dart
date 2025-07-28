@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'SplashScreen.dart';
+import 'screens/SplashScreen.dart';
 import 'screens/register_screen.dart';
-import 'login.dart';
+import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/map_screen.dart';
+import 'screens/car_search_screen.dart';
 import 'routes/app_routes.dart';
 
 void main() {
@@ -11,7 +14,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,8 +26,11 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.welcome,
       routes: {
         AppRoutes.welcome: (context) => const SplashScreen(),
-        AppRoutes.login: (context) => const LoginScreen(),
+        AppRoutes.login: (context) => LoginScreen(),
         AppRoutes.register: (context) => RegisterScreen(),
+        AppRoutes.home: (context) => HomeScreen(),
+        '/car-search': (context) => CarSearchScreen(),
+        '/map': (context) => MapScreen(),
       },
     );
   }

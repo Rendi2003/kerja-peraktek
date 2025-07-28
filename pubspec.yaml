@@ -57,6 +57,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/
-    - assets/icons/
-    # - assets/fonts/
+    - assets/mobil.jpeg
+    - assets/mobil1.jpeg
+    - assets/mobil2.jpeg
