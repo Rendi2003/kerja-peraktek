@@ -58,6 +58,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/mobil.jpeg
-    - assets/mobil1.jpeg
-    - assets/mobil2.jpeg
+    - assets/images/mobil.jpeg
+    - assets/images/mobil1.jpeg
+    - assets/images/mobil2.jpeg
+    - assets/images/mobil3.jpeg
+    - assets/images/mobil4.jpeg
+    - assets/images/mobil5.jpeg
+    - assets/images/mobil6.jpeg
+    - assets/images/mobil7.jpeg
+    - assets/images/mobil8.jpeg
+    - assets/images/mobil9.jpeg
+    - assets/images/mobil10.jpeg
+    - web/map.html
+    - assets/images/Logo contak.png

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic Leaflet Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                console.log("Memulai inisialisasi peta...");
+                console.log("Nilai L:", L); // Ini harus menampilkan objek Leaflet
+
+                if (typeof L === 'undefined') {
+                    console.error("ERROR: Leaflet library (L) is not defined. Check network connection or script loading order.");
+                    document.getElementById('map').innerHTML = 'Gagal memuat peta: Pustaka Leaflet tidak tersedia. Cek koneksi internet atau konsol browser (F12).';
+                    return;
+                }
+
+                var map = L.map('map').setView([-6.200000, 106.816666], 11); // Contoh: Jakarta
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                console.log("Peta Leaflet berhasil diinisialisasi.");
+
+            } catch (error) {
+                console.error("Kesalahan saat inisialisasi peta:", error);
+                document.getElementById('map').innerHTML = 'Gagal memuat peta: ' + error.message + '. Cek konsol browser (F12).';
+            }
+        });
+    </script>
+</body>
+</html>

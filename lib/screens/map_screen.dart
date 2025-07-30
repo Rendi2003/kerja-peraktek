@@ -78,7 +78,7 @@ class _MapScreenState extends State<MapScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
-                      'assets/mobil.jpeg',
+                      'assets/images/mobil.jpeg',
                       width: 60,
                       height: 45,
                       fit: BoxFit.cover,
