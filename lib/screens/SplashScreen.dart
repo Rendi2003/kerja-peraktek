@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'login_screen.dart';
 
 class SplashScreen extends StatelessWidget {

@@ -1,7 +1,118 @@
 import 'package:flutter/material.dart';
-import '../routes/app_routes.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import ini untuk akses SharedPreferences
+import '../routes/app_routes.dart'; // Pastikan path ini benar
 
-class LoginScreen extends StatelessWidget {
+// Fungsi pembantu untuk membuat dekorasi titik-titik
+// Ditempatkan di luar kelas LoginScreen agar lebih modular.
+Widget _buildDots(Color color) {
+  return Row(
+    children: List.generate(
+      4,
+      (i) => Column(
+        children: List.generate(
+          4,
+          (j) => Container(
+            width: 7,
+            height: 7,
+            margin: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+// Mengubah LoginScreen menjadi StatefulWidget agar dapat mengelola state input dan loading
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  // Controllers untuk mengambil input dari TextField Email dan Password
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  // Variabel untuk menunjukkan apakah proses login sedang berlangsung
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    // Penting: Bersihkan controllers saat widget dibuang untuk mencegah kebocoran memori
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // Fungsi yang akan dijalankan saat tombol "Sign in" ditekan
+  void _handleLogin() async {
+    // 1. Tampilkan indikator loading
+    setState(() {
+      _isLoading = true;
+    });
+
+    // 2. Ambil nilai email dan password dari TextField
+    final String emailInput = _emailController.text.trim();
+    final String passwordInput = _passwordController.text;
+
+    // 3. Validasi dasar: pastikan input tidak kosong
+    if (emailInput.isEmpty || passwordInput.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email dan kata sandi tidak boleh kosong!'),
+          backgroundColor: Colors.orange, // Warna warning
+        ),
+      );
+      setState(() {
+        _isLoading = false;
+      }); // Sembunyikan loading
+      return; // Hentikan proses
+    }
+
+    // 4. Ambil data yang tersimpan dari SharedPreferences
+    // Ini akan menjadi "database" lokal kita untuk contoh ini.
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? registeredEmail = prefs.getString('registered_email');
+    final String? registeredPassword = prefs.getString('registered_password');
+
+    // Untuk debugging, Anda bisa mencetak nilai yang diambil
+    print('Input Email: $emailInput, Input Password: $passwordInput');
+    print(
+        'Registered Email: $registeredEmail, Registered Password: $registeredPassword');
+
+    // 5. Simulasikan penundaan jaringan/proses autentikasi backend
+    await Future.delayed(const Duration(seconds: 2));
+
+    // 6. Sembunyikan indikator loading
+    setState(() {
+      _isLoading = false;
+    });
+
+    // 7. Verifikasi kredensial
+    if (emailInput == registeredEmail && passwordInput == registeredPassword) {
+      // Login berhasil: tampilkan pesan sukses dan navigasi ke halaman Home
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login berhasil! Selamat datang!'),
+          backgroundColor: Colors.green, // Warna sukses
+        ),
+      );
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } else {
+      // Login gagal: tampilkan pesan error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email atau kata sandi salah. Silakan coba lagi.'),
+          backgroundColor: Colors.red, // Warna error
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,8 +223,11 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  // Email
+                  // Email TextField
                   TextField(
+                    controller: _emailController, // Kaitkan controller
+                    keyboardType:
+                        TextInputType.emailAddress, // Keyboard tipe email
                     decoration: InputDecoration(
                       prefixIcon:
                           Icon(Icons.email_outlined, color: Colors.grey[600]),
@@ -128,9 +242,10 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  // Password
+                  // Password TextField
                   TextField(
-                    obscureText: true,
+                    controller: _passwordController, // Kaitkan controller
+                    obscureText: true, // Untuk menyembunyikan teks password
                     decoration: InputDecoration(
                       prefixIcon:
                           Icon(Icons.lock_outline, color: Colors.grey[600]),
@@ -158,17 +273,21 @@ class LoginScreen extends StatelessWidget {
                         elevation: 4,
                         shadowColor: Colors.black.withOpacity(0.15),
                       ),
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, AppRoutes.home);
-                      },
-                      child: const Text(
-                        'Sign in',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
+                      onPressed: _isLoading
+                          ? null // Nonaktifkan tombol saat _isLoading true
+                          : _handleLogin, // Panggil fungsi _handleLogin
+                      child: _isLoading
+                          ? const CircularProgressIndicator(
+                              color:
+                                  Colors.white) // Tampilkan loading indicator
+                          : const Text(
+                              'Sign in',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -186,6 +305,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
+                            // Navigasi ke halaman Register
                             Navigator.pushReplacementNamed(
                                 context, AppRoutes.register);
                           },
@@ -209,26 +329,4 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget _buildDots(Color color) {
-  return Row(
-    children: List.generate(
-      4,
-      (i) => Column(
-        children: List.generate(
-          4,
-          (j) => Container(
-            width: 7,
-            height: 7,
-            margin: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
 }
