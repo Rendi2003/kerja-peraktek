@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const BookingStep2());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BookingStep2 extends StatelessWidget {
+  const BookingStep2({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -186,8 +186,8 @@ class _Process2ScreenState extends State<Process2Screen> {
                           flex: 3,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              'https://via.placeholder.com/200x150/F5F5F5/000000?text=Car+Image', // Placeholder image
+                            child: Image.asset(
+                              'assets/images/mobil.jpeg', // Ganti dengan path gambar yang sesuai
                               fit: BoxFit.cover,
                             ),
                           ),

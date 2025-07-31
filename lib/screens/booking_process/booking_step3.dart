@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const BookingStep3());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BookingStep3 extends StatelessWidget {
+  const BookingStep3({super.key});
 
   @override
   Widget build(BuildContext context) {

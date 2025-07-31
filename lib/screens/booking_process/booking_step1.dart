@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'booking_step2.dart'; // Pastikan file ini sudah ada
 
 void main() {
-  runApp(const MyApp());
+  runApp(const BookingStep1());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BookingStep1 extends StatelessWidget {
+  const BookingStep1({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class ProcessScreen extends StatefulWidget {
 }
 
 class _ProcessScreenState extends State<ProcessScreen> {
-  int _selectedIndex = 2; // Index for "Process" icon
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -41,30 +42,24 @@ class _ProcessScreenState extends State<ProcessScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Process 1',
+          'Booking',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.transparent, // Make app bar transparent
-        elevation: 0, // Remove shadow
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      extendBodyBehindAppBar:
-          true, // Extend body behind the app bar for the gradient
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Background gradient/color
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF2E7D32), // Darker green top
-                  Color(0xFF4CAF50), // Lighter green bottom
-                ],
+                colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
               ),
             ),
           ),
-          // Background shapes (simplified for demonstration)
           Positioned(
             top: MediaQuery.of(context).size.height * 0.1,
             left: -50,
@@ -95,21 +90,18 @@ class _ProcessScreenState extends State<ProcessScreen> {
               ),
             ),
           ),
-          // Main content
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10), // Space below app bar title
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          // Handle "Sedang beroperasi" button press
-                        },
+                        onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white.withOpacity(0.2),
                           shape: RoundedRectangleBorder(
@@ -118,15 +110,12 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
                         ),
-                        child: const Text(
-                          'Sedang beroperasi',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
+                        child: const Text('Sedang beroperasi',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 14)),
                       ),
                       ElevatedButton(
-                        onPressed: () {
-                          // Handle "Telah selesai" button press
-                        },
+                        onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white.withOpacity(0.2),
                           shape: RoundedRectangleBorder(
@@ -135,18 +124,15 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
                         ),
-                        child: const Text(
-                          'Telah selesai',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
+                        child: const Text('Telah selesai',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 14)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 15),
-                  const Text(
-                    '27 Feb 2023',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
+                  const Text('27 Feb 2023',
+                      style: TextStyle(color: Colors.white70, fontSize: 16)),
                   const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.topRight,
@@ -157,7 +143,6 @@ class _ProcessScreenState extends State<ProcessScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // User/Car Info Card
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
@@ -166,10 +151,9 @@ class _ProcessScreenState extends State<ProcessScreen> {
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5))
                       ],
                     ),
                     child: Row(
@@ -186,46 +170,36 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'ADITYA',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
+                              const Text('ADITYA',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18)),
                               const SizedBox(height: 5),
-                              const Text(
-                                'Toyota Innova G REBORN 2018',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                ),
-                              ),
+                              const Text('Toyota Innova G REBORN 2018',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black87)),
                               const SizedBox(height: 5),
                               Row(
-                                children: [
-                                  const Text(
-                                    'Kode Pesanan : ',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  const Text(
-                                    '209G67',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
+                                children: const [
+                                  Text('Kode Pesanan : ',
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black54)),
+                                  Text('209G67',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87)),
                                 ],
                               ),
                               const SizedBox(height: 5),
                               GestureDetector(
                                 onTap: () {
-                                  // Handle "Detail..." tap
-                                  print('Detail tapped!');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Process2Screen()),
+                                  );
                                 },
                                 child: const Text(
                                   'Detail...',
@@ -251,41 +225,33 @@ class _ProcessScreenState extends State<ProcessScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home,
-                color: _selectedIndex == 0 ? Colors.green : Colors.grey),
-            label: '',
-          ),
+              icon: Icon(Icons.home,
+                  color: _selectedIndex == 0 ? Colors.green : Colors.grey),
+              label: ''),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search,
-                color: _selectedIndex == 1 ? Colors.green : Colors.grey),
-            label: '',
-          ),
+              icon: Icon(Icons.search,
+                  color: _selectedIndex == 1 ? Colors.green : Colors.grey),
+              label: ''),
           BottomNavigationBarItem(
             icon: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(
-                    0xFF4CAF50), // Green background for process button
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.sync,
-                  color: Colors.white), // Sync icon for process
+                  color: const Color(0xFF4CAF50),
+                  borderRadius: BorderRadius.circular(10)),
+              child: const Icon(Icons.sync, color: Colors.white),
             ),
             label: 'Process',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-                color: _selectedIndex == 3 ? Colors.green : Colors.grey),
-            label: '',
-          ),
+              icon: Icon(Icons.person,
+                  color: _selectedIndex == 3 ? Colors.green : Colors.grey),
+              label: ''),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor:
-            Colors.green, // This won't directly affect the custom middle button
         onTap: _onItemTapped,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed, // Ensures all items are visible
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

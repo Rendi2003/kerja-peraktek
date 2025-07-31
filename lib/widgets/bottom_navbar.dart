@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../routes/app_routes.dart'; // Pastikan path-nya sesuai
 
 class BottomNavbar extends StatefulWidget {
   final int selectedIndex;
@@ -21,15 +22,16 @@ class _BottomNavbarState extends State<BottomNavbar> {
     setState(() {
       _selectedIndex = index;
     });
-    // Navigasi sesuai menu
+
     if (index == 0 && widget.selectedIndex != 0) {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
     } else if (index == 1 && widget.selectedIndex != 1) {
-      Navigator.pushReplacementNamed(context, '/car-search');
+      Navigator.pushReplacementNamed(context, AppRoutes.carSearch);
     } else if (index == 2 && widget.selectedIndex != 2) {
-      Navigator.pushReplacementNamed(context, '/map');
+      Navigator.pushReplacementNamed(
+          context, AppRoutes.bookingStep1); // ✅ sudah diperbaiki
     } else if (index == 3 && widget.selectedIndex != 3) {
-      Navigator.pushReplacementNamed(context, '/profile');
+      Navigator.pushReplacementNamed(context, AppRoutes.profile);
     }
   }
 
