@@ -167,22 +167,82 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           _buildRentalCard(
                             context: context,
                             name: 'ADITYA',
-                            car: 'Toyota Innova G REBORN 2018',
-                            code: '209G67',
+                            car: 'Toyota C-HR. 2018',
+                            code: '209967',
                             status: 'Berjalan',
-                            statusColor: Colors.orange,
+                            statusColor: Colors.green,
                             image:
                                 'assets/images/mobil.jpeg', // Pastikan path asset benar
                           ),
                           _buildRentalCard(
                             context: context,
-                            name: 'BUDI',
-                            car: 'Toyota Yaris 2020',
-                            code: '209G90',
+                            name: 'Ramdani',
+                            car: 'Honda BR-V 2019',
+                            code: '209684',
                             status: 'Berjalan',
-                            statusColor: Colors.orange,
+                            statusColor: Colors.green,
                             image:
                                 'assets/images/mobil1.jpeg', // Pastikan path asset benar
+                          ),
+                          _buildRentalCard(
+                            context: context,
+                            name: 'Salsa',
+                            car: 'Toyota Rush 2015',
+                            code: '209A82',
+                            status: 'Berjalan',
+                            statusColor: Colors.green,
+                            image:
+                                'assets/images/mobil2.jpeg', // Pastikan path asset benar
+                          ),
+                          _buildRentalCard(
+                            context: context,
+                            name: 'Yasmin',
+                            car: 'Toyota GR86 2015',
+                            code: '209A82',
+                            status: 'Berjalan',
+                            statusColor: Colors.green,
+                            image:
+                                'assets/images/mobil3.jpeg', // Pastikan path asset benar
+                          ),
+                          _buildRentalCard(
+                            context: context,
+                            name: 'Fayiz',
+                            car: 'Koenigsegg Gemera',
+                            code: '209A82',
+                            status: 'Berjalan',
+                            statusColor: Colors.green,
+                            image:
+                                'assets/images/mobil4.jpeg', // Pastikan path asset benar
+                          ),
+                          _buildRentalCard(
+                            context: context,
+                            name: 'Deski',
+                            car: 'Toyota Vios',
+                            code: '209A82',
+                            status: 'Berjalan',
+                            statusColor: Colors.green,
+                            image:
+                                'assets/images/mobil5.jpeg', // Pastikan path asset benar
+                          ),
+                          _buildRentalCard(
+                            context: context,
+                            name: 'Adit',
+                            car: 'Toyota Camry NASCAR Cup Series Car',
+                            code: '209A82',
+                            status: 'Berjalan',
+                            statusColor: Colors.green,
+                            image:
+                                'assets/images/mobil6.jpeg', // Pastikan path asset benar
+                          ),
+                          _buildRentalCard(
+                            context: context,
+                            name: 'Alesha',
+                            car: 'Lamborghini Huracán',
+                            code: '209A82',
+                            status: 'Berjalan',
+                            statusColor: Colors.green,
+                            image:
+                                'assets/images/mobil7.jpeg', // Pastikan path asset benar
                           ),
                           // Tambahkan card lainnya di sini...
                         ],
@@ -320,7 +380,13 @@ class _ProcessScreenState extends State<ProcessScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const Process2Screen()),
+                          builder: (context) => BookingStep2(
+                                bookingDetails: BookingDetails(
+                                  customerName: name,
+                                  carDetails: car,
+                                  carImage: image,
+                                ),
+                              )),
                     );
                   },
                   child: const Text(

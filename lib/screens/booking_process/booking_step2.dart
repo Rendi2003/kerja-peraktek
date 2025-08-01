@@ -1,27 +1,38 @@
+// booking_step2.dart
+
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const BookingStep2());
+// [PERBAIKAN] Hapus MaterialApp dari sini
+// Halaman ini sekarang menerima data dari halaman sebelumnya
+class BookingDetails {
+  final String customerName;
+  final String carDetails;
+  final String carImage;
+  // Anda bisa tambahkan properti lain yang diperlukan di sini,
+  // seperti 'kode', 'lokasi', 'fitur', dll.
+  const BookingDetails({
+    required this.customerName,
+    required this.carDetails,
+    required this.carImage,
+  });
 }
 
 class BookingStep2 extends StatelessWidget {
-  const BookingStep2({super.key});
+  // Tambahkan parameter untuk menerima data booking
+  final BookingDetails bookingDetails;
+
+  const BookingStep2({super.key, required this.bookingDetails});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Process App',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const Process2Screen(),
-    );
+    // Langsung kembalikan Process2Screen dengan data yang sudah diterima
+    return Process2Screen(bookingDetails: bookingDetails);
   }
 }
 
 class Process2Screen extends StatefulWidget {
-  const Process2Screen({super.key});
+  final BookingDetails bookingDetails;
+  const Process2Screen({super.key, required this.bookingDetails});
 
   @override
   State<Process2Screen> createState() => _Process2ScreenState();
@@ -41,14 +52,17 @@ class _Process2ScreenState extends State<Process2Screen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Process 2',
+          'Detail Booking', // Ganti judul agar lebih relevan
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.transparent, // Make app bar transparent
         elevation: 0, // Remove shadow
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
-      extendBodyBehindAppBar:
-          true, // Extend body behind the app bar for the gradient
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           // Background gradient/color
@@ -103,7 +117,7 @@ class _Process2ScreenState extends State<Process2Screen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10), // Space below app bar title
-                  // User/Car Info Card with back arrow
+                  // User/Car Info Card
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
@@ -121,37 +135,31 @@ class _Process2ScreenState extends State<Process2Screen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(
-                                context); // Go back to previous screen
-                          },
-                          child: const Icon(Icons.arrow_back,
-                              color: Colors.black, size: 24),
-                        ),
-                        const SizedBox(width: 15),
-                        const CircleAvatar(
+                        // Gunakan data dari widget.bookingDetails
+                        CircleAvatar(
                           radius: 30,
-                          backgroundColor: Colors.grey,
-                          child:
-                              Icon(Icons.person, color: Colors.white, size: 40),
+                          backgroundImage:
+                              AssetImage(widget.bookingDetails.carImage),
+                          onBackgroundImageError: (exception, stackTrace) {
+                            // Penanganan jika gambar tidak ditemukan
+                          },
                         ),
                         const SizedBox(width: 15),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'ADITYA',
-                                style: TextStyle(
+                              Text(
+                                widget.bookingDetails.customerName,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 ),
                               ),
                               const SizedBox(height: 5),
-                              const Text(
-                                'Toyota Innova G REBORN 2018',
-                                style: TextStyle(
+                              Text(
+                                widget.bookingDetails.carDetails,
+                                style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.black87,
                                 ),
@@ -187,13 +195,14 @@ class _Process2ScreenState extends State<Process2Screen> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.asset(
-                              'assets/images/mobil.jpeg', // Ganti dengan path gambar yang sesuai
+                              widget.bookingDetails
+                                  .carImage, // Gunakan data dinamis
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
                         const SizedBox(width: 15),
-                        // Features List
+                        // Features List (Ini masih statis, Anda bisa membuatnya dinamis jika punya datanya)
                         Expanded(
                           flex: 1,
                           child: Column(

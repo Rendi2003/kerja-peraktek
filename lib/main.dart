@@ -37,7 +37,13 @@ class MyApp extends StatelessWidget {
         AppRoutes.map: (context) => MapScreen(),
         AppRoutes.profile: (context) => ProfileScreen(),
         AppRoutes.bookingStep1: (context) => const BookingStep1(),
-        AppRoutes.bookingStep2: (context) => const BookingStep2(),
+        AppRoutes.bookingStep2: (context) => const BookingStep2(
+              bookingDetails: BookingDetails(
+                customerName: '',
+                carDetails: '',
+                carImage: '',
+              ),
+            ),
         AppRoutes.bookingStep3: (context) => const BookingStep3(),
       },
     );
