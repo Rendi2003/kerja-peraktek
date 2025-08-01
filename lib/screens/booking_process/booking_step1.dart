@@ -170,7 +170,7 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           code: '209G67',
                           status: 'Berjalan',
                           statusColor: Colors.green,
-                          image: 'assets/images/aditya.jpg',
+                          image: 'assets/images/mobil.jpeg',
                         ),
                         _buildRentalCard(
                           name: 'BUDI',
@@ -178,7 +178,7 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           code: '209G90',
                           status: 'Berjalan',
                           statusColor: Colors.green,
-                          image: 'assets/images/budi.jpg',
+                          image: 'assets/images/mobil1.jpeg',
                         ),
                         _buildRentalCard(
                           name: 'CINDY',
@@ -186,7 +186,7 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           code: '209H11',
                           status: 'Berjalan',
                           statusColor: Colors.green,
-                          image: 'assets/images/cindy.jpg',
+                          image: 'assets/images/mobil2.jpeg',
                         ),
                         _buildRentalCard(
                           name: 'DAVID',
@@ -194,7 +194,7 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           code: '209T33',
                           status: 'Berjalan',
                           statusColor: Colors.green,
-                          image: 'assets/images/david.jpg',
+                          image: 'assets/images/mobil4.jpeg',
                         ),
                         _buildRentalCard(
                           name: 'ELLA',
@@ -202,7 +202,7 @@ class _ProcessScreenState extends State<ProcessScreen> {
                           code: '209X77',
                           status: 'Berjalan',
                           statusColor: Colors.green,
-                          image: 'assets/images/ella.jpg',
+                          image: 'assets/images/mobil3.jpeg',
                         ),
                       ],
                     ),
