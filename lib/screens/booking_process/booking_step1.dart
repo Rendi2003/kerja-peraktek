@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'booking_step2.dart'; // Pastikan file ini sudah ada
-
-void main() {
-  runApp(const BookingStep1());
-}
+import 'booking_step2.dart';
+import 'booking_step3.dart';
 
 class BookingStep1 extends StatelessWidget {
   const BookingStep1({super.key});
@@ -11,6 +8,7 @@ class BookingStep1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Process App',
       theme: ThemeData(
         primarySwatch: Colors.green,
@@ -30,27 +28,31 @@ class ProcessScreen extends StatefulWidget {
 
 class _ProcessScreenState extends State<ProcessScreen> {
   int _selectedIndex = 2;
+  bool isOperating = true;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.pushReplacementNamed(context, '/car-search');
+    } else if (index == 3) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Booking',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Booking', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
+          // Background
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -60,6 +62,7 @@ class _ProcessScreenState extends State<ProcessScreen> {
               ),
             ),
           ),
+          // Decorative shapes
           Positioned(
             top: MediaQuery.of(context).size.height * 0.1,
             left: -50,
@@ -94,16 +97,18 @@ class _ProcessScreenState extends State<ProcessScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() => isOperating = true);
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.2),
+                          backgroundColor: isOperating
+                              ? Colors.black.withOpacity(0.4)
+                              : Colors.black.withOpacity(0.2),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -115,9 +120,18 @@ class _ProcessScreenState extends State<ProcessScreen> {
                                 TextStyle(color: Colors.white, fontSize: 14)),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() => isOperating = false);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const BookingStep3()),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.2),
+                          backgroundColor: !isOperating
+                              ? Colors.white.withOpacity(0.4)
+                              : Colors.white.withOpacity(0.2),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -131,87 +145,64 @@ class _ProcessScreenState extends State<ProcessScreen> {
                     ],
                   ),
                   const SizedBox(height: 15),
-                  const Text('27 Feb 2023',
-                      style: TextStyle(color: Colors.white70, fontSize: 16)),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('27 Feb 2023',
+                        style: TextStyle(color: Colors.white70, fontSize: 16)),
+                  ),
                   const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.topRight,
                     child: Text(
-                      'Sedang berjalan',
+                      isOperating ? 'Sedang berjalan' : '',
                       style: TextStyle(
                           color: Colors.white.withOpacity(0.7), fontSize: 14),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5))
-                      ],
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Expanded(
+                    child: ListView(
                       children: [
-                        const CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.grey,
-                          child:
-                              Icon(Icons.person, color: Colors.white, size: 40),
+                        _buildDateLabel('27 Feb 2023'),
+                        _buildRentalCard(
+                          name: 'ADITYA',
+                          car: 'Toyota Innova G REBORN 2018',
+                          code: '209G67',
+                          status: 'Berjalan',
+                          statusColor: Colors.green,
+                          image: 'assets/images/aditya.jpg',
                         ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('ADITYA',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18)),
-                              const SizedBox(height: 5),
-                              const Text('Toyota Innova G REBORN 2018',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black87)),
-                              const SizedBox(height: 5),
-                              Row(
-                                children: const [
-                                  Text('Kode Pesanan : ',
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.black54)),
-                                  Text('209G67',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black87)),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Process2Screen()),
-                                  );
-                                },
-                                child: const Text(
-                                  'Detail...',
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        _buildRentalCard(
+                          name: 'BUDI',
+                          car: 'Toyota Yaris 2020',
+                          code: '209G90',
+                          status: 'Berjalan',
+                          statusColor: Colors.green,
+                          image: 'assets/images/budi.jpg',
+                        ),
+                        _buildRentalCard(
+                          name: 'CINDY',
+                          car: 'Honda Jazz RS 2019',
+                          code: '209H11',
+                          status: 'Berjalan',
+                          statusColor: Colors.green,
+                          image: 'assets/images/cindy.jpg',
+                        ),
+                        _buildRentalCard(
+                          name: 'DAVID',
+                          car: 'Daihatsu Terios 2021',
+                          code: '209T33',
+                          status: 'Berjalan',
+                          statusColor: Colors.green,
+                          image: 'assets/images/david.jpg',
+                        ),
+                        _buildRentalCard(
+                          name: 'ELLA',
+                          car: 'Mitsubishi Xpander 2022',
+                          code: '209X77',
+                          status: 'Berjalan',
+                          statusColor: Colors.green,
+                          image: 'assets/images/ella.jpg',
                         ),
                       ],
                     ),
@@ -252,6 +243,97 @@ class _ProcessScreenState extends State<ProcessScreen> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+
+  Widget _buildDateLabel(String date) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        date,
+        style: const TextStyle(
+          color: Colors.white70,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRentalCard({
+    required String name,
+    required String car,
+    required String code,
+    required String status,
+    required Color statusColor,
+    required String image,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5))
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundImage: AssetImage(image),
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18)),
+                const SizedBox(height: 5),
+                Text(car,
+                    style:
+                        const TextStyle(fontSize: 16, color: Colors.black87)),
+                const SizedBox(height: 5),
+                Text('Kode Pesanan : $code',
+                    style:
+                        const TextStyle(fontSize: 14, color: Colors.black54)),
+                const SizedBox(height: 5),
+                Text('Status : $status',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: statusColor,
+                    )),
+                const SizedBox(height: 5),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Process2Screen()),
+                    );
+                  },
+                  child: const Text(
+                    'Detail...',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

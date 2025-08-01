@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const BookingStep3());
-}
+import 'booking_step1.dart';
 
 class BookingStep3 extends StatelessWidget {
   const BookingStep3({super.key});
@@ -10,6 +7,7 @@ class BookingStep3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Process App',
       theme: ThemeData(
         primarySwatch: Colors.green,
@@ -28,44 +26,42 @@ class Process3Screen extends StatefulWidget {
 }
 
 class _Process3ScreenState extends State<Process3Screen> {
-  int _selectedIndex = 2; // Index for "Process" icon
-  bool _showSedangBeroperasi = true; // State for the two top buttons
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.pushReplacementNamed(context, '/car-search');
+    } else if (index == 2) {
+      // Stay on current
+    } else if (index == 3) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Process 3',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.transparent, // Make app bar transparent
-        elevation: 0, // Remove shadow
+        title: const Text('Riwayat Booking',
+            style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      extendBodyBehindAppBar:
-          true, // Extend body behind the app bar for the gradient
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Background gradient/color
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF2E7D32), // Darker green top
-                  Color(0xFF4CAF50), // Lighter green bottom
-                ],
+                colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
               ),
             ),
           ),
-          // Background shapes (simplified for demonstration)
           Positioned(
             top: MediaQuery.of(context).size.height * 0.1,
             left: -50,
@@ -96,106 +92,72 @@ class _Process3ScreenState extends State<Process3Screen> {
               ),
             ),
           ),
-          // Main content
           SafeArea(
-            child: SingleChildScrollView(
+            child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10), // Space below app bar title
+                  const SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              _showSedangBeroperasi = true;
-                            });
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const BookingStep1()),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _showSedangBeroperasi
-                                ? Colors.white.withOpacity(0.9)
-                                : Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withOpacity(0.2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Sedang beroperasi',
-                            style: TextStyle(
-                              color: _showSedangBeroperasi
-                                  ? Colors.black
-                                  : Colors.white,
-                              fontSize: 14,
-                            ),
+                            style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _showSedangBeroperasi = false;
-                            });
-                          },
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: !_showSedangBeroperasi
-                                ? Colors.black.withOpacity(
-                                    0.7) // Darker for "Telah selesai"
-                                : Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.black.withOpacity(0.9),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Telah selesai',
-                            style: TextStyle(
-                              color: !_showSedangBeroperasi
-                                  ? Colors.white
-                                  : Colors.white,
-                              fontSize: 14,
-                            ),
+                            style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  // List of process items
-                  _buildProcessSection('22 Feb 2023', [
-                    _ProcessCard(
-                      userName: 'ADITYA',
-                      carInfo: 'Toyota Avanza 2019',
-                      orderCode: '209G84',
-                      status: 'Selesai',
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        _buildProcessSection(
+                            '22 Feb 2023', 'Toyota Avanza 2019', '209G84'),
+                        _buildProcessSection('19 Feb 2023',
+                            'Daihatsu Ayla x [At] 2015', '209A82'),
+                        _buildProcessSection(
+                            '15 Feb 2023', 'Toyota Camry 1.3 STD', '209A52'),
+                      ],
                     ),
-                  ]),
-                  _buildProcessSection('19 Feb 2023', [
-                    _ProcessCard(
-                      userName: 'ADITYA',
-                      carInfo: 'Daihatsu Ayla x [At] 2015',
-                      orderCode: '209A82',
-                      status: 'Selesai',
-                    ),
-                  ]),
-                  _buildProcessSection('15 Feb 2023', [
-                    _ProcessCard(
-                      userName: 'ADITYA',
-                      carInfo: 'Toyota Camry 1.3 STD',
-                      orderCode: '209A52',
-                      status: 'Selesai',
-                    ),
-                  ]),
-                  const SizedBox(height: 20), // Space at bottom before nav bar
+                  )
                 ],
               ),
             ),
-          ),
+          )
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -214,12 +176,10 @@ class _Process3ScreenState extends State<Process3Screen> {
             icon: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(
-                    0xFF4CAF50), // Green background for process button
+                color: const Color(0xFF4CAF50),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.sync,
-                  color: Colors.white), // Sync icon for process
+              child: const Icon(Icons.sync, color: Colors.white),
             ),
             label: 'Process',
           ),
@@ -230,122 +190,76 @@ class _Process3ScreenState extends State<Process3Screen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor:
-            Colors.green, // This won't directly affect the custom middle button
         onTap: _onItemTapped,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed, // Ensures all items are visible
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }
 
-  Widget _buildProcessSection(String date, List<Widget> cards) {
+  Widget _buildProcessSection(String date, String car, String code) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(
-            date,
+        const SizedBox(height: 10),
+        Text(date,
             style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+                color: Colors.white70,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
+        const SizedBox(height: 5),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16.0),
+          margin: const EdgeInsets.only(bottom: 15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5))
+            ],
           ),
-        ),
-        ...cards
-            .map((card) => Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 15.0), // Space between cards
-                  child: card,
-                ))
-            .toList(),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.grey,
+                child: Icon(Icons.person, color: Colors.white, size: 40),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('ADITYA',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    const SizedBox(height: 5),
+                    Text(car,
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.black87)),
+                    const SizedBox(height: 5),
+                    Text('Kode Pesanan : $code',
+                        style: const TextStyle(
+                            fontSize: 14, color: Colors.black54)),
+                    const SizedBox(height: 5),
+                    const Text('Status : Selesai',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87)),
+                  ],
+                ),
+              )
+            ],
+          ),
+        )
       ],
-    );
-  }
-}
-
-class _ProcessCard extends StatelessWidget {
-  final String userName;
-  final String carInfo;
-  final String orderCode;
-  final String status;
-
-  const _ProcessCard({
-    required this.userName,
-    required this.carInfo,
-    required this.orderCode,
-    required this.status,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.person, color: Colors.white, size: 40),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  userName,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  carInfo,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Kode Pesanan : $orderCode',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Status : $status',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
