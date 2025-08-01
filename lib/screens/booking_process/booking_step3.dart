@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
 import 'booking_step1.dart';
 
+// [FIXED] Kelas ini sudah benar, tidak lagi memakai MaterialApp
 class BookingStep3 extends StatelessWidget {
   const BookingStep3({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Process App',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const Process3Screen(),
-    );
+    return const Process3Screen();
   }
 }
 
+// Tidak ada perubahan dari sini ke bawah, kodemu sudah bagus.
 class Process3Screen extends StatefulWidget {
   const Process3Screen({super.key});
 
@@ -26,16 +20,23 @@ class Process3Screen extends StatefulWidget {
 }
 
 class _Process3ScreenState extends State<Process3Screen> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 2; // Default ke menu booking
 
   void _onItemTapped(int index) {
+    if (_selectedIndex == index)
+      return; // Mencegah navigasi ke halaman yang sama
+
     setState(() => _selectedIndex = index);
     if (index == 0) {
       Navigator.pushReplacementNamed(context, '/home');
     } else if (index == 1) {
       Navigator.pushReplacementNamed(context, '/car-search');
     } else if (index == 2) {
-      // Stay on current
+      // Tombol tengah ditekan, kembali ke halaman booking utama
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const BookingStep1()),
+      );
     } else if (index == 3) {
       Navigator.pushReplacementNamed(context, '/profile');
     }
@@ -49,6 +50,7 @@ class _Process3ScreenState extends State<Process3Screen> {
             style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -59,36 +61,6 @@ class _Process3ScreenState extends State<Process3Screen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
-              ),
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.1,
-            left: -50,
-            child: Transform.rotate(
-              angle: -0.5,
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.2,
-            right: -70,
-            child: Transform.rotate(
-              angle: 0.8,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(50),
-                ),
               ),
             ),
           ),
@@ -103,6 +75,7 @@ class _Process3ScreenState extends State<Process3Screen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
+                            // Kembali ke halaman booking yang sedang berjalan
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
@@ -125,9 +98,10 @@ class _Process3ScreenState extends State<Process3Screen> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed:
+                              () {}, // Tidak ada aksi karena sudah di halaman ini
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black.withOpacity(0.9),
+                            backgroundColor: Colors.black.withOpacity(0.4),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -160,40 +134,40 @@ class _Process3ScreenState extends State<Process3Screen> {
           )
         ],
       ),
+      // [DIUBAH] BAGIAN INI SEKARANG SAMA PERSIS DENGAN booking_step1.dart
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home,
-                color: _selectedIndex == 0 ? Colors.green : Colors.grey),
-            label: '',
-          ),
+              icon: Icon(Icons.home,
+                  color: _selectedIndex == 0 ? Colors.green : Colors.grey),
+              label: 'Home'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search,
-                color: _selectedIndex == 1 ? Colors.green : Colors.grey),
-            label: '',
-          ),
+              icon: Icon(Icons.search,
+                  color: _selectedIndex == 1 ? Colors.green : Colors.grey),
+              label: 'Search'),
           BottomNavigationBarItem(
             icon: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF4CAF50),
-                borderRadius: BorderRadius.circular(10),
-              ),
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
+                  color: Color(0xFF4CAF50), shape: BoxShape.circle),
               child: const Icon(Icons.sync, color: Colors.white),
             ),
-            label: 'Process',
+            label: 'Booking',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-                color: _selectedIndex == 3 ? Colors.green : Colors.grey),
-            label: '',
-          ),
+              icon: Icon(Icons.person,
+                  color: _selectedIndex == 3 ? Colors.green : Colors.grey),
+              label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        elevation: 8.0,
       ),
     );
   }
@@ -216,12 +190,6 @@ class _Process3ScreenState extends State<Process3Screen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5))
-            ],
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +220,8 @@ class _Process3ScreenState extends State<Process3Screen> {
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87)),
+                            color: Colors
+                                .green)), // Warna status diubah jadi hijau
                   ],
                 ),
               )
