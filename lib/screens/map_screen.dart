@@ -1,144 +1,124 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../widgets/bottom_navbar.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http; // Import package http
+import 'dart:convert'; // Import untuk jsonDecode
 
-class MapScreen extends StatefulWidget {
+class MapWithRouteScreen extends StatefulWidget {
+  const MapWithRouteScreen({super.key});
+
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  State<MapWithRouteScreen> createState() => _MapWithRouteScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
-  late GoogleMapController mapController;
-  final LatLng _center = const LatLng(-6.200000, 106.816666); // Jakarta
-  final LatLng _markerPos =
-      const LatLng(-6.176655, 106.790686); // Example marker
+class _MapWithRouteScreenState extends State<MapWithRouteScreen> {
+  // Titik awal dan akhir rute
+  final LatLng _startPoint =
+      LatLng(-6.229728, 106.689431); // Contoh: Alam Sutera
+  final LatLng _endPoint =
+      LatLng(-6.176655, 106.790686); // Lokasi marker sebelumnya
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+  // List untuk menyimpan koordinat rute
+  List<LatLng> _routePoints = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Panggil fungsi untuk mengambil data rute saat widget pertama kali dibuat
+    _fetchRoute();
+  }
+
+  // Fungsi untuk mengambil data rute dari OSRM API
+  Future<void> _fetchRoute() async {
+    final url =
+        'https://router.project-osrm.org/route/v1/driving/${_startPoint.longitude},${_startPoint.latitude};${_endPoint.longitude},${_endPoint.latitude}?overview=full&geometries=geojson';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final geometry = data['routes'][0]['geometry']['coordinates'];
+
+        // OSRM mengembalikan koordinat dalam format [longitude, latitude]
+        // Kita perlu mengubahnya menjadi objek LatLng(latitude, longitude)
+        final List<LatLng> points = geometry
+            .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
+            .toList();
+
+        // Perbarui state untuk menggambar ulang peta dengan rute
+        setState(() {
+          _routePoints = points;
+        });
+      } else {
+        // Handle error jika API gagal
+        print('Error fetching route: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('An error occurred: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      appBar: AppBar(
+        title: Text('Peta dengan Rute'),
+      ),
+      body: FlutterMap(
+        options: MapOptions(
+          initialCenter: _startPoint,
+          initialZoom: 11.5,
+        ),
         children: [
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(
-              target: _center,
-              zoom: 11.5,
+          // Layer Peta
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName:
+                'com.example.app', // Ganti dengan nama package Anda
+          ),
+
+          // Layer Rute (Polyline)
+          // Hanya tampilkan jika routePoints tidak kosong
+          if (_routePoints.isNotEmpty)
+            PolylineLayer(
+              polylines: [
+                Polyline(
+                  points: _routePoints,
+                  color: Colors.red, // Warna garis merah sesuai permintaan
+                  strokeWidth: 5,
+                ),
+              ],
             ),
-            markers: {
+
+          // Layer untuk Marker di titik awal dan akhir
+          MarkerLayer(
+            markers: [
+              // Marker Titik Awal
               Marker(
-                markerId: MarkerId('order'),
-                position: _markerPos,
-                infoWindow: InfoWindow(title: 'Order Location'),
+                point: _startPoint,
+                width: 80,
+                height: 80,
+                child: Column(
+                  children: [
+                    Icon(Icons.my_location, color: Colors.blue),
+                  ],
+                ),
               ),
-            },
-            myLocationEnabled: false,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-          ),
-          // Status chip
-          Positioned(
-            top: 40,
-            left: 16,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: Color(0xFF232B36),
-                borderRadius: BorderRadius.circular(16),
+              // Marker Titik Tujuan
+              Marker(
+                point: _endPoint,
+                width: 80,
+                height: 80,
+                child: Column(
+                  children: [
+                    Icon(Icons.location_on, size: 40, color: Colors.red),
+                  ],
+                ),
               ),
-              child: Text(
-                'Sedang beroperasi',
-                style: TextStyle(color: Colors.white, fontSize: 14),
-              ),
-            ),
-          ),
-          // Info card
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: 80,
-            child: Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Color(0xFF232B36),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      'assets/images/mobil.jpeg',
-                      width: 60,
-                      height: 45,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'ADITYA',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Text(
-                              'Dari ',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 13),
-                            ),
-                            Text(
-                              'Tangerang',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13),
-                            ),
-                            Text('   >   ',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 13)),
-                            Text(
-                              'Tujuan ',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 13),
-                            ),
-                            Text(
-                              'Bandung',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavbar(selectedIndex: 2),
     );
   }
 }

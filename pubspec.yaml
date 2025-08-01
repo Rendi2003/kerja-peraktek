@@ -43,8 +43,10 @@ dependencies:
   cached_network_image: ^3.2.3
   flutter_launcher_icons: ^0.13.1
   url_launcher: ^6.1.10
-  google_maps_flutter: ^2.6.0
   image_picker: ^1.1.2
+  flutter_map: ^8.1.1
+  latlong2: ^0.9.1
+  http: ^1.5.0-beta.2
   
 
 dev_dependencies:

@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.register: (context) => RegisterScreen(),
         AppRoutes.home: (context) => HomeScreen(),
         '/car-search': (context) => CarSearchScreen(),
-        AppRoutes.map: (context) => MapScreen(),
+        AppRoutes.map: (context) => MapWithRouteScreen(),
         AppRoutes.profile: (context) => ProfileScreen(),
         AppRoutes.bookingStep1: (context) => const BookingStep1(),
         AppRoutes.bookingStep2: (context) => const BookingStep2(
