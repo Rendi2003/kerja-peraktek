@@ -1,15 +1,10 @@
-// booking_step2.dart
-
 import 'package:flutter/material.dart';
 
-// [PERBAIKAN] Hapus MaterialApp dari sini
-// Halaman ini sekarang menerima data dari halaman sebelumnya
 class BookingDetails {
   final String customerName;
   final String carDetails;
   final String carImage;
-  // Anda bisa tambahkan properti lain yang diperlukan di sini,
-  // seperti 'kode', 'lokasi', 'fitur', dll.
+
   const BookingDetails({
     required this.customerName,
     required this.carDetails,
@@ -18,20 +13,19 @@ class BookingDetails {
 }
 
 class BookingStep2 extends StatelessWidget {
-  // Tambahkan parameter untuk menerima data booking
   final BookingDetails bookingDetails;
 
   const BookingStep2({super.key, required this.bookingDetails});
 
   @override
   Widget build(BuildContext context) {
-    // Langsung kembalikan Process2Screen dengan data yang sudah diterima
     return Process2Screen(bookingDetails: bookingDetails);
   }
 }
 
 class Process2Screen extends StatefulWidget {
   final BookingDetails bookingDetails;
+
   const Process2Screen({super.key, required this.bookingDetails});
 
   @override
@@ -39,7 +33,7 @@ class Process2Screen extends StatefulWidget {
 }
 
 class _Process2ScreenState extends State<Process2Screen> {
-  int _selectedIndex = 2; // Index for "Process" icon
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -51,12 +45,10 @@ class _Process2ScreenState extends State<Process2Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Detail Booking', // Ganti judul agar lebih relevan
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.transparent, // Make app bar transparent
-        elevation: 0, // Remove shadow
+        title:
+            const Text('Detail Booking', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
@@ -65,20 +57,15 @@ class _Process2ScreenState extends State<Process2Screen> {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Background gradient/color
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF2E7D32), // Darker green top
-                  Color(0xFF4CAF50), // Lighter green bottom
-                ],
+                colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
               ),
             ),
           ),
-          // Background shapes (simplified for demonstration)
           Positioned(
             top: MediaQuery.of(context).size.height * 0.1,
             left: -50,
@@ -109,15 +96,13 @@ class _Process2ScreenState extends State<Process2Screen> {
               ),
             ),
           ),
-          // Main content
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10), // Space below app bar title
-                  // User/Car Info Card
+                  const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
@@ -135,35 +120,24 @@ class _Process2ScreenState extends State<Process2Screen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Gunakan data dari widget.bookingDetails
                         CircleAvatar(
                           radius: 30,
                           backgroundImage:
                               AssetImage(widget.bookingDetails.carImage),
-                          onBackgroundImageError: (exception, stackTrace) {
-                            // Penanganan jika gambar tidak ditemukan
-                          },
                         ),
                         const SizedBox(width: 15),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                widget.bookingDetails.customerName,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
+                              Text(widget.bookingDetails.customerName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18)),
                               const SizedBox(height: 5),
-                              Text(
-                                widget.bookingDetails.carDetails,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                ),
-                              ),
+                              Text(widget.bookingDetails.carDetails,
+                                  style: const TextStyle(
+                                      fontSize: 16, color: Colors.black87)),
                             ],
                           ),
                         ),
@@ -171,7 +145,6 @@ class _Process2ScreenState extends State<Process2Screen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Car Image and Features
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
@@ -189,20 +162,17 @@ class _Process2ScreenState extends State<Process2Screen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Car Image (replace with your actual image asset)
                         Expanded(
                           flex: 3,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.asset(
-                              widget.bookingDetails
-                                  .carImage, // Gunakan data dinamis
+                              widget.bookingDetails.carImage,
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
                         const SizedBox(width: 15),
-                        // Features List (Ini masih statis, Anda bisa membuatnya dinamis jika punya datanya)
                         Expanded(
                           flex: 1,
                           child: Column(
@@ -227,7 +197,6 @@ class _Process2ScreenState extends State<Process2Screen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Tangerang -> Bandung section
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
@@ -244,28 +213,18 @@ class _Process2ScreenState extends State<Process2Screen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const Text(
-                          'Tangerang',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Icon(Icons.arrow_forward,
-                            size: 24, color: Colors.grey),
-                        const Text(
-                          'Bandung',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      children: const [
+                        Text('Tangerang',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Icon(Icons.arrow_forward, size: 24, color: Colors.grey),
+                        Text('Bandung',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Jarak Tempuh Info
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
@@ -283,44 +242,31 @@ class _Process2ScreenState extends State<Process2Screen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Jarak Tempuh',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
+                        const Text('Jarak Tempuh',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18)),
                         const SizedBox(height: 8),
                         Text(
                           'Jarak tempuh maksimal yang diperbolehkan adalah 400km per hari. '
                           'Penggunaan yang melebihi batasan akan dikenakan sebesar Rp1500 per km.',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[700],
-                          ),
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.grey[700]),
                         ),
                         const Divider(
                             height: 20, thickness: 1, color: Colors.grey),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
+                            const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  '15.00',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24,
-                                  ),
-                                ),
-                                Text(
-                                  'x1 hari',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                              children: [
+                                Text('15.00',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 24)),
+                                Text('x1 hari',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.grey)),
                               ],
                             ),
                             const Icon(Icons.arrow_forward_ios,
@@ -328,20 +274,13 @@ class _Process2ScreenState extends State<Process2Screen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                const Text(
-                                  '23.00',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24,
-                                  ),
-                                ),
-                                Text(
-                                  'Rp. 300.000',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
+                                const Text('23.00',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 24)),
+                                Text('Rp. 300.000',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.grey[700])),
                               ],
                             ),
                           ],
@@ -350,7 +289,8 @@ class _Process2ScreenState extends State<Process2Screen> {
                         Center(
                           child: GestureDetector(
                             onTap: () {
-                              print('Pantau tapped!');
+                              Navigator.pushNamed(
+                                  context, '/map'); // 👈 Navigasi ke Map
                             },
                             child: const Text(
                               'Pantau',
@@ -365,7 +305,7 @@ class _Process2ScreenState extends State<Process2Screen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20), // Add some space at the bottom
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -374,56 +314,36 @@ class _Process2ScreenState extends State<Process2Screen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home,
-                color: _selectedIndex == 0 ? Colors.green : Colors.grey),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search,
-                color: _selectedIndex == 1 ? Colors.green : Colors.grey),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: ''),
           BottomNavigationBarItem(
             icon: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(
-                    0xFF4CAF50), // Green background for process button
+                color: const Color(0xFF4CAF50),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.sync,
-                  color: Colors.white), // Sync icon for process
+              child: const Icon(Icons.sync, color: Colors.white),
             ),
             label: 'Process',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-                color: _selectedIndex == 3 ? Colors.green : Colors.grey),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor:
-            Colors.green, // This won't directly affect the custom middle button
         onTap: _onItemTapped,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed, // Ensures all items are visible
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }
 }
 
-// Helper widget for feature items (icon and text)
 class _FeatureItem extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const _FeatureItem({
-    required this.icon,
-    required this.text,
-  });
+  const _FeatureItem({required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -434,11 +354,9 @@ class _FeatureItem extends StatelessWidget {
           Icon(icon, size: 20, color: Colors.black54),
           const SizedBox(width: 8),
           Flexible(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: Text(text,
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                overflow: TextOverflow.ellipsis),
           ),
         ],
       ),
