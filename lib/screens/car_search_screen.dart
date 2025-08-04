@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import '../widgets/bottom_navbar.dart';
 import 'car_detail_screen.dart';
 
-class CarSearchScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> cars = [
+class CarSearchScreen extends StatefulWidget {
+  const CarSearchScreen({super.key});
+
+  @override
+  State<CarSearchScreen> createState() => _CarSearchScreenState();
+}
+
+class _CarSearchScreenState extends State<CarSearchScreen> {
+  // Data mobil statis
+  final List<Map<String, dynamic>> allCars = [
     {
       'image': 'assets/images/mobil.jpeg',
       'name': 'Toyota C-HR. 2018',
@@ -81,8 +89,45 @@ class CarSearchScreen extends StatelessWidget {
       'price': 'Rp500.000/hari',
       'rating': 4.5,
     },
-    // Tambahkan data mobil lain jika perlu
   ];
+
+  // Variabel state untuk menampung daftar mobil yang difilter
+  late List<Map<String, dynamic>> filteredCars;
+  // Controller untuk mengontrol input teks pada kolom pencarian
+  final TextEditingController _searchController = TextEditingController();
+
+  // Metode untuk memfilter daftar mobil
+  void _filterCars(String searchText) {
+    setState(() {
+      if (searchText.isEmpty) {
+        // Jika teks pencarian kosong, tampilkan semua mobil
+        filteredCars = allCars;
+      } else {
+        // Filter daftar mobil berdasarkan nama
+        filteredCars = allCars
+            .where((car) =>
+                car['name'].toLowerCase().contains(searchText.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+  // Metode yang dipanggil saat widget pertama kali dibuat
+  @override
+  void initState() {
+    super.initState();
+    filteredCars = allCars; // Inisialisasi daftar dengan semua mobil
+    _searchController.addListener(() {
+      _filterCars(_searchController.text);
+    });
+  }
+
+  // Metode yang dipanggil saat widget dihapus
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,9 +139,9 @@ class CarSearchScreen extends StatelessWidget {
             // Header hijau dan search box
             Container(
               width: double.infinity,
-              padding:
-                  EdgeInsets.only(left: 16, top: 24, right: 16, bottom: 40),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.only(
+                  left: 16, top: 24, right: 16, bottom: 40),
+              decoration: const BoxDecoration(
                 color: Color(0xFF22C55E),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(40),
@@ -106,18 +151,20 @@ class CarSearchScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: TextField(
+                      controller: _searchController, // Menggunakan controller
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
                         hintText: 'Search',
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 16),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
                   ),
@@ -127,16 +174,18 @@ class CarSearchScreen extends StatelessWidget {
             // List mobil
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                itemCount: cars.length,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                itemCount: filteredCars
+                    .length, // Menggunakan daftar yang sudah difilter
                 itemBuilder: (context, index) {
-                  final car = cars[index];
+                  final car = filteredCars[index];
                   return Container(
-                    margin: EdgeInsets.only(bottom: 18),
+                    margin: const EdgeInsets.only(bottom: 18),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.black12,
                           blurRadius: 6,
@@ -157,8 +206,8 @@ class CarSearchScreen extends StatelessWidget {
                             );
                           },
                           child: ClipRRect(
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(18)),
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(18)),
                             child: Image.asset(
                               car['image'],
                               height: 150,
@@ -175,7 +224,7 @@ class CarSearchScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -186,7 +235,7 @@ class CarSearchScreen extends StatelessWidget {
                                   Expanded(
                                     child: Text(
                                       car['name'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
                                         color: Colors.black,
@@ -194,7 +243,7 @@ class CarSearchScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -202,12 +251,12 @@ class CarSearchScreen extends StatelessWidget {
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.star,
+                                        const Icon(Icons.star,
                                             color: Color(0xFFFFC107), size: 18),
-                                        SizedBox(width: 2),
+                                        const SizedBox(width: 2),
                                         Text(
                                           car['rating'].toString(),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
@@ -218,7 +267,7 @@ class CarSearchScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 car['location'],
                                 style: TextStyle(
@@ -226,10 +275,10 @@ class CarSearchScreen extends StatelessWidget {
                                   fontSize: 13,
                                 ),
                               ),
-                              SizedBox(height: 6),
+                              const SizedBox(height: 6),
                               Text(
                                 'From ${car['price']}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13,
@@ -247,7 +296,7 @@ class CarSearchScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavbar(selectedIndex: 1),
+      bottomNavigationBar: const BottomNavbar(selectedIndex: 1),
     );
   }
 }
