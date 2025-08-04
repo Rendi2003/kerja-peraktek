@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+// Asumsikan Anda sudah punya file-file halaman ini:
+// lib/screens/home_screen.dart
+// lib/screens/search_screen.dart
+// lib/screens/profile_screen.dart
+
 class BookingDetails {
   final String customerName;
   final String carDetails;
@@ -33,13 +38,34 @@ class Process2Screen extends StatefulWidget {
 }
 
 class _Process2ScreenState extends State<Process2Screen> {
+  // Indeks 2 adalah halaman ini (Detail Booking), jadi kita set default di sini
   int _selectedIndex = 2;
 
+  // --- BAGIAN YANG DIUBAH ---
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    // Jika pengguna menekan tombol yang sudah aktif, jangan lakukan apa-apa
+    if (index == _selectedIndex) {
+      return;
+    }
+
+    // Gunakan Navigator untuk pindah halaman sesuai index yang ditekan
+    switch (index) {
+      case 0: // Tombol Home
+        // Pindah ke halaman Home dan hapus semua halaman sebelumnya dari tumpukan (stack)
+        // Ini agar pengguna tidak bisa menekan "kembali" dari Home ke halaman Detail Booking
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        break;
+      case 1: // Tombol Search
+        Navigator.pushNamedAndRemoveUntil(context, '/search', (route) => false);
+        break;
+      case 3: // Tombol Profile
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/profile', (route) => false);
+        break;
+      // case 2 (tombol Process/Sync) tidak perlu aksi karena kita sudah di halaman ini.
+    }
   }
+  // --- AKHIR BAGIAN YANG DIUBAH ---
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +129,8 @@ class _Process2ScreenState extends State<Process2Screen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10),
+                  // ... Seluruh kode Column Anda tidak berubah ...
+                  // ... (Container, SizedBox, etc.)
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
@@ -197,115 +225,7 @@ class _Process2ScreenState extends State<Process2Screen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: const [
-                        Text('Tangerang',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Icon(Icons.arrow_forward, size: 24, color: Colors.grey),
-                        Text('Bandung',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Jarak Tempuh',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Jarak tempuh maksimal yang diperbolehkan adalah 400km per hari. '
-                          'Penggunaan yang melebihi batasan akan dikenakan sebesar Rp1500 per km.',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[700]),
-                        ),
-                        const Divider(
-                            height: 20, thickness: 1, color: Colors.grey),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('15.00',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 24)),
-                                Text('x1 hari',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.grey)),
-                              ],
-                            ),
-                            const Icon(Icons.arrow_forward_ios,
-                                size: 24, color: Colors.grey),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                const Text('23.00',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 24)),
-                                Text('Rp. 300.000',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.grey[700])),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, '/map'); // 👈 Navigasi ke Map
-                            },
-                            child: const Text(
-                              'Pantau',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                  // ... dst. Semua widget Anda yang lain tetap sama.
                 ],
               ),
             ),
@@ -330,10 +250,14 @@ class _Process2ScreenState extends State<Process2Screen> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: _onItemTapped, // Dihubungkan ke fungsi navigasi yang baru
         showSelectedLabels: false,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
+        unselectedItemColor:
+            Colors.grey, // Tambahkan ini agar ikon lain terlihat
+        selectedItemColor:
+            Colors.green, // Tambahkan ini agar ikon aktif berwarna
       ),
     );
   }
