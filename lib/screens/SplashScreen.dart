@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Ini adalah UI dari splash screen Anda
     return Scaffold(
       // Anda bisa beri warna background sesuai tema aplikasi
-      backgroundColor: Colors.deepPurple,
+      backgroundColor: Colors.green,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
