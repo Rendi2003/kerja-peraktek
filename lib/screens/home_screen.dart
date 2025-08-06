@@ -1,63 +1,299 @@
 import 'package:flutter/material.dart';
-import 'package:rentalmobil/database_helper.dart';
+import '../widgets/bottom_navbar.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  late Future<List<Map<String, dynamic>>> _bookingsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadBookings();
-  }
-
-  void _loadBookings() {
-    setState(() {
-      _bookingsFuture = DatabaseHelper.instance.getAllBookings();
-    });
-  }
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard Booking'),
-        actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadBookings)
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Green header with greeting
+            Container(
+              width: double.infinity,
+              padding:
+                  EdgeInsets.only(left: 16, top: 24, right: 16, bottom: 32),
+              decoration: BoxDecoration(
+                color: Color(0xFF22C55E),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Halo',
+                    style: TextStyle(
+                      color: Colors.black.withOpacity(0.6),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Mau merasakan\npengalaman apa hari ini?',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Process Sewa
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Text(
+                'Process Sewa',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            // Rental history list
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                children: [
+                  _buildDateLabel('27 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'ADITYA',
+                    car: 'Toyota C-HR. 2018',
+                    code: '209967',
+                    status: 'Dibatalkan',
+                    statusColor: Colors.red,
+                    image: 'assets/images/mobil.jpeg',
+                  ),
+                  _buildDateLabel('22 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Ramdani',
+                    car: 'Honda BR-V 2019',
+                    code: '209684',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil1.jpeg',
+                  ),
+                  _buildDateLabel('19 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Salsa',
+                    car: 'Toyota Rush 2015',
+                    code: '209A82',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil2.jpeg',
+                  ),
+                  _buildDateLabel('15 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Yasmin',
+                    car: 'Toyota GR86 2015',
+                    code: '209A82',
+                    status: 'Dibatalkan',
+                    statusColor: Colors.red,
+                    image: 'assets/images/mobil3.jpeg',
+                  ),
+                  _buildDateLabel('25 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Fayiz',
+                    car: 'Koenigsegg Gemera',
+                    code: '209A82',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil4.jpeg',
+                  ),
+                  _buildDateLabel('25 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Deski',
+                    car: 'Toyota Vios',
+                    code: '209A82',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil5.jpeg',
+                  ),
+                  _buildDateLabel('25 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Adit',
+                    car: 'Toyota Camry NASCAR Cup Series Car',
+                    code: '209A82',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil6.jpeg',
+                  ),
+                  _buildDateLabel('25 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Alesha',
+                    car: 'Lamborghini Huracán',
+                    code: '209A82',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil7.jpeg',
+                  ),
+                  _buildDateLabel('25 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Rehan',
+                    car: 'Toyota Agya',
+                    code: '209A82',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil8.jpeg',
+                  ),
+                  _buildDateLabel('25 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Ramdan',
+                    car: 'Toyota Hiace',
+                    code: '209A82',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil9.jpeg',
+                  ),
+                  _buildDateLabel('25 Feb 2023'),
+                  _buildRentalCard(
+                    name: 'Khaneta',
+                    car: 'Daihatsu Terios 2020',
+                    code: '209A82',
+                    status: 'Selesai',
+                    statusColor: Colors.green,
+                    image: 'assets/images/mobil10.jpeg',
+                  ),
+                  // Add more cards as needed
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavbar(),
+    );
+  }
+
+  Widget _buildDateLabel(String date) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, top: 8, bottom: 4),
+      child: Text(
+        date,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 13,
+          color: Colors.black.withOpacity(0.7),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRentalCard({
+    required String name,
+    required String car,
+    required String code,
+    required String status,
+    required Color statusColor,
+    required String image,
+  }) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _bookingsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("Belum ada data booking."));
-          }
-          final bookings = snapshot.data!;
-          return ListView.builder(
-            itemCount: bookings.length,
-            itemBuilder: (context, index) {
-              final booking = bookings[index];
-              return Card(
-                margin: const EdgeInsets.all(8),
-                child: ListTile(
-                  title: Text("Mobil: ${booking['car_brand'] ?? 'N/A'}"),
-                  subtitle: Text("Status: ${booking['status'] ?? 'N/A'}"),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset(
+              image,
+              height: 120,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              color: Colors.black.withOpacity(0.3),
+              colorBlendMode: BlendMode.darken,
+            ),
+          ),
+          Container(
+            height: 120,
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.black.withOpacity(0.25),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 36, color: Colors.black54),
                 ),
-              );
-            },
-          );
-        },
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        name,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        car,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Kode Pesanan : $code',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Text(
+                            'Status : ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                          Text(
+                            status,
+                            style: TextStyle(
+                              color: statusColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

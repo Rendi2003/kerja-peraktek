@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
-import 'booking_step1.dart';
 
-// [FIXED] Kelas ini sudah benar, tidak lagi memakai MaterialApp
+void main() {
+  runApp(const BookingStep3());
+}
+
 class BookingStep3 extends StatelessWidget {
   const BookingStep3({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Process3Screen();
+    return MaterialApp(
+      title: 'Process App',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: const Process3Screen(),
+    );
   }
 }
 
-// Tidak ada perubahan dari sini ke bawah, kodemu sudah bagus.
 class Process3Screen extends StatefulWidget {
   const Process3Screen({super.key});
 
@@ -20,215 +28,324 @@ class Process3Screen extends StatefulWidget {
 }
 
 class _Process3ScreenState extends State<Process3Screen> {
-  int _selectedIndex = 2; // Default ke menu booking
+  int _selectedIndex = 2; // Index for "Process" icon
+  bool _showSedangBeroperasi = true; // State for the two top buttons
 
   void _onItemTapped(int index) {
-    if (_selectedIndex == index)
-      return; // Mencegah navigasi ke halaman yang sama
-
-    setState(() => _selectedIndex = index);
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else if (index == 1) {
-      Navigator.pushReplacementNamed(context, '/car-search');
-    } else if (index == 2) {
-      // Tombol tengah ditekan, kembali ke halaman booking utama
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const BookingStep1()),
-      );
-    } else if (index == 3) {
-      Navigator.pushReplacementNamed(context, '/profile');
-    }
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Riwayat Booking',
-            style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
+        title: const Text(
+          'Process 3',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.transparent, // Make app bar transparent
+        elevation: 0, // Remove shadow
       ),
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar:
+          true, // Extend body behind the app bar for the gradient
       body: Stack(
         children: [
+          // Background gradient/color
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
+                colors: [
+                  Color(0xFF2E7D32), // Darker green top
+                  Color(0xFF4CAF50), // Lighter green bottom
+                ],
               ),
             ),
           ),
+          // Background shapes (simplified for demonstration)
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.1,
+            left: -50,
+            child: Transform.rotate(
+              angle: -0.5,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.2,
+            right: -70,
+            child: Transform.rotate(
+              angle: 0.8,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+              ),
+            ),
+          ),
+          // Main content
           SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 10), // Space below app bar title
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            // Kembali ke halaman booking yang sedang berjalan
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const BookingStep1()),
-                            );
+                            setState(() {
+                              _showSedangBeroperasi = true;
+                            });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: _showSedangBeroperasi
+                                ? Colors.white.withOpacity(0.9)
+                                : Colors.white.withOpacity(0.2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Sedang beroperasi',
-                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            style: TextStyle(
+                              color: _showSedangBeroperasi
+                                  ? Colors.black
+                                  : Colors.white,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed:
-                              () {}, // Tidak ada aksi karena sudah di halaman ini
+                          onPressed: () {
+                            setState(() {
+                              _showSedangBeroperasi = false;
+                            });
+                          },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black.withOpacity(0.4),
+                            backgroundColor: !_showSedangBeroperasi
+                                ? Colors.black.withOpacity(
+                                    0.7) // Darker for "Telah selesai"
+                                : Colors.white.withOpacity(0.2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Telah selesai',
-                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            style: TextStyle(
+                              color: !_showSedangBeroperasi
+                                  ? Colors.white
+                                  : Colors.white,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        _buildProcessSection(
-                            '22 Feb 2023', 'Toyota Avanza 2019', '209G84'),
-                        _buildProcessSection('19 Feb 2023',
-                            'Daihatsu Ayla x [At] 2015', '209A82'),
-                        _buildProcessSection(
-                            '15 Feb 2023', 'Toyota Camry 1.3 STD', '209A52'),
-                      ],
+                  // List of process items
+                  _buildProcessSection('22 Feb 2023', [
+                    _ProcessCard(
+                      userName: 'ADITYA',
+                      carInfo: 'Toyota Avanza 2019',
+                      orderCode: '209G84',
+                      status: 'Selesai',
                     ),
-                  )
+                  ]),
+                  _buildProcessSection('19 Feb 2023', [
+                    _ProcessCard(
+                      userName: 'ADITYA',
+                      carInfo: 'Daihatsu Ayla x [At] 2015',
+                      orderCode: '209A82',
+                      status: 'Selesai',
+                    ),
+                  ]),
+                  _buildProcessSection('15 Feb 2023', [
+                    _ProcessCard(
+                      userName: 'ADITYA',
+                      carInfo: 'Toyota Camry 1.3 STD',
+                      orderCode: '209A52',
+                      status: 'Selesai',
+                    ),
+                  ]),
+                  const SizedBox(height: 20), // Space at bottom before nav bar
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
-      // [DIUBAH] BAGIAN INI SEKARANG SAMA PERSIS DENGAN booking_step1.dart
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.home,
-                  color: _selectedIndex == 0 ? Colors.green : Colors.grey),
-              label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.search,
-                  color: _selectedIndex == 1 ? Colors.green : Colors.grey),
-              label: 'Search'),
-          BottomNavigationBarItem(
-            icon: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: const BoxDecoration(
-                  color: Color(0xFF4CAF50), shape: BoxShape.circle),
-              child: const Icon(Icons.sync, color: Colors.white),
-            ),
-            label: 'Booking',
+            icon: Icon(Icons.home,
+                color: _selectedIndex == 0 ? Colors.green : Colors.grey),
+            label: '',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person,
-                  color: _selectedIndex == 3 ? Colors.green : Colors.grey),
-              label: 'Profile'),
+            icon: Icon(Icons.search,
+                color: _selectedIndex == 1 ? Colors.green : Colors.grey),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(
+                    0xFF4CAF50), // Green background for process button
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.sync,
+                  color: Colors.white), // Sync icon for process
+            ),
+            label: 'Process',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person,
+                color: _selectedIndex == 3 ? Colors.green : Colors.grey),
+            label: '',
+          ),
         ],
         currentIndex: _selectedIndex,
+        selectedItemColor:
+            Colors.green, // This won't directly affect the custom middle button
         onTap: _onItemTapped,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        elevation: 8.0,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        type: BottomNavigationBarType.fixed, // Ensures all items are visible
       ),
     );
   }
 
-  Widget _buildProcessSection(String date, String car, String code) {
+  Widget _buildProcessSection(String date, List<Widget> cards) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10),
-        Text(date,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            date,
             style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
-                fontWeight: FontWeight.bold)),
-        const SizedBox(height: 5),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16.0),
-          margin: const EdgeInsets.only(bottom: 15),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
+              color: Colors.white70,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.grey,
-                child: Icon(Icons.person, color: Colors.white, size: 40),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('ADITYA',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18)),
-                    const SizedBox(height: 5),
-                    Text(car,
-                        style: const TextStyle(
-                            fontSize: 16, color: Colors.black87)),
-                    const SizedBox(height: 5),
-                    Text('Kode Pesanan : $code',
-                        style: const TextStyle(
-                            fontSize: 14, color: Colors.black54)),
-                    const SizedBox(height: 5),
-                    const Text('Status : Selesai',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors
-                                .green)), // Warna status diubah jadi hijau
-                  ],
-                ),
-              )
-            ],
-          ),
-        )
+        ),
+        ...cards
+            .map((card) => Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 15.0), // Space between cards
+                  child: card,
+                ))
+            .toList(),
       ],
+    );
+  }
+}
+
+class _ProcessCard extends StatelessWidget {
+  final String userName;
+  final String carInfo;
+  final String orderCode;
+  final String status;
+
+  const _ProcessCard({
+    required this.userName,
+    required this.carInfo,
+    required this.orderCode,
+    required this.status,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.grey,
+            child: Icon(Icons.person, color: Colors.white, size: 40),
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  carInfo,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Kode Pesanan : $orderCode',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Status : $status',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

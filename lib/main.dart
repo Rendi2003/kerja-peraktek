@@ -1,18 +1,17 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
-import 'package:rentalmobil/routes/app_routes.dart';
-import 'package:rentalmobil/screens/SplashScreen.dart';
-import 'package:rentalmobil/screens/car_search_screen.dart';
-import 'package:rentalmobil/screens/home_screen.dart';
-import 'package:rentalmobil/screens/login_screen.dart';
-import 'package:rentalmobil/screens/map_screen.dart';
-import 'package:rentalmobil/screens/profile_screen.dart';
-import 'package:rentalmobil/screens/register_screen.dart';
+import 'package:rentalmobil/screens/booking_process/booking_step1.dart';
+import 'package:rentalmobil/screens/booking_process/booking_step2.dart';
+import 'package:rentalmobil/screens/booking_process/booking_step3.dart';
+import 'screens/SplashScreen.dart';
+import 'screens/register_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/map_screen.dart';
+import 'screens/car_search_screen.dart';
+import 'screens/profile_screen.dart';
+import 'routes/app_routes.dart';
 
-// PASTIKAN FUNGSI INI ADA DI PALING ATAS, DI LUAR CLASS MANAPUN
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -30,14 +29,22 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AppRoutes.welcome,
       routes: {
-        // Pastikan semua halaman ini ada filenya
         AppRoutes.welcome: (context) => const SplashScreen(),
-        AppRoutes.login: (context) => const LoginScreen(),
+        AppRoutes.login: (context) => LoginScreen(),
         AppRoutes.register: (context) => RegisterScreen(),
-        AppRoutes.home: (context) => const HomeScreen(),
-        AppRoutes.carSearch: (context) => CarSearchScreen(),
+        AppRoutes.home: (context) => HomeScreen(),
+        '/car-search': (context) => CarSearchScreen(),
         AppRoutes.map: (context) => MapWithRouteScreen(),
         AppRoutes.profile: (context) => ProfileScreen(),
+        AppRoutes.bookingStep1: (context) => const BookingStep1(),
+        AppRoutes.bookingStep2: (context) => const BookingStep2(
+              bookingDetails: BookingDetails(
+                customerName: '',
+                carDetails: '',
+                carImage: '',
+              ),
+            ),
+        AppRoutes.bookingStep3: (context) => const BookingStep3(),
       },
     );
   }
