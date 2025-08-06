@@ -1,175 +1,156 @@
-import 'package:sqflite/sqflite.dart';
+import 'dart:io';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 class DatabaseHelper {
-  static const _databaseName = "RentalMobil.db";
-  static const _databaseVersion = 1;
+  static final _databaseName = "RentalMobil.db";
+  static final _databaseVersion = 2; // Versi bisa tetap
 
-  // ==================================================================
-  // --- DEFINISI NAMA TABEL DAN KOLOM ---
-  // Menggunakan konstanta seperti ini adalah praktik terbaik untuk menghindari salah ketik
-  // ==================================================================
+  // Nama tabel dan kolom
+  static final tableUsers = 'users';
+  static final columnId = 'id';
+  static final columnEmail = 'email';
+  static final columnPassword = 'password';
+  static final columnNama = 'nama';
+  static final columnTelepon = 'no_telepon';
 
-  // --- Tabel mobil_favorit ---
-  static const tableFavorites = 'mobil_favorit';
-  static const favColumnId = '_id';
-  static const favColumnCarId = 'car_id';
-  static const favColumnBrand = 'brand';
-  static const favColumnModel = 'model';
+  static final tableBookings = 'bookings';
 
-  // --- Tabel profiles ---
-  static const tableProfiles = 'profiles';
-  static const profileColumnId =
-      'id'; // Tipe TEXT/String untuk UUID dari sistem auth
-  static const profileColumnFullName = 'full_name';
-  static const profileColumnPhone = 'phone_number';
-
-  // --- Tabel bookings ---
-  static const tableBookings = 'bookings';
-  static const bookingColumnId = '_id';
-  static const bookingColumnUserId = 'user_id';
-  static const bookingColumnCarId = 'car_id';
-  static const bookingColumnStartDate = 'start_date';
-  static const bookingColumnEndDate = 'end_date';
-  static const bookingColumnTotalPrice = 'total_price';
-  static const bookingColumnStatus = 'status';
-
-  // ==================================================================
-  // --- KODE BOILERPLATE DATABASE ---
-  // Bagian ini untuk memastikan hanya ada satu koneksi ke database
-  // ==================================================================
-
-  // Singleton class
+  // Singleton pattern
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
-  // Variabel untuk menampung koneksi database
   static Database? _database;
   Future<Database> get database async {
     if (_database != null) return _database!;
-    // Jika _database null, kita inisialisasi
     _database = await _initDatabase();
     return _database!;
   }
 
-  // Fungsi ini membuka database (atau membuatnya jika belum ada)
   _initDatabase() async {
-    String path = join(await getDatabasesPath(), _databaseName);
-    return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, _databaseName);
+    return await openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
   }
 
-  // Perintah SQL untuk membuat SEMUA tabel saat database pertama kali diciptakan
   Future _onCreate(Database db, int version) async {
-    // Perintah untuk membuat tabel mobil favorit
     await db.execute('''
-          CREATE TABLE $tableFavorites (
-            $favColumnId INTEGER PRIMARY KEY,
-            $favColumnCarId INTEGER NOT NULL,
-            $favColumnBrand TEXT NOT NULL,
-            $favColumnModel TEXT NOT NULL
+          CREATE TABLE $tableUsers (
+            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+            $columnEmail TEXT NOT NULL UNIQUE,
+            $columnPassword TEXT NOT NULL,
+            $columnNama TEXT,
+            $columnTelepon TEXT
           )
           ''');
 
-    // Perintah untuk membuat tabel profil
-    await db.execute('''
-          CREATE TABLE $tableProfiles (
-            $profileColumnId TEXT PRIMARY KEY,
-            $profileColumnFullName TEXT NOT NULL,
-            $profileColumnPhone TEXT NOT NULL
-          )
-          ''');
-
-    // Perintah untuk membuat tabel booking
     await db.execute('''
           CREATE TABLE $tableBookings (
-            $bookingColumnId INTEGER PRIMARY KEY,
-            $bookingColumnUserId TEXT NOT NULL,
-            $bookingColumnCarId INTEGER NOT NULL,
-            $bookingColumnStartDate TEXT NOT NULL,
-            $bookingColumnEndDate TEXT NOT NULL,
-            $bookingColumnTotalPrice INTEGER NOT NULL,
-            $bookingColumnStatus TEXT NOT NULL 
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_email TEXT,
+            car_brand TEXT,
+            start_date TEXT,
+            status TEXT
           )
           ''');
   }
 
-  // ==================================================================
-  // --- FUNGSI-FUNGSI UNTUK TABEL FAVORIT ---
-  // ==================================================================
-  Future<int> insertFavorite(Map<String, dynamic> row) async {
-    Database db = await instance.database;
-    return await db.insert(tableFavorites, row);
+  // NOTE: onUpgrade ini akan menghapus semua data saat versi database naik.
+  // Cocok untuk development, hati-hati saat aplikasi sudah rilis.
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    await db.execute('DROP TABLE IF EXISTS $tableUsers');
+    await db.execute('DROP TABLE IF EXISTS $tableBookings');
+    _onCreate(db, newVersion);
   }
 
-  Future<List<Map<String, dynamic>>> queryAllFavorites() async {
-    Database db = await instance.database;
-    return await db.query(tableFavorites);
+  String _hashPassword(String password) {
+    final bytes = utf8.encode(password);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 
-  Future<int> deleteFavorite(int carId) async {
+  Future<int> addUser(
+      String email, String password, String nama, String telepon) async {
     Database db = await instance.database;
-    return await db.delete(tableFavorites,
-        where: '$favColumnCarId = ?', whereArgs: [carId]);
+    final hashedPassword = _hashPassword(password);
+
+    Map<String, dynamic> row = {
+      columnEmail: email,
+      columnPassword: hashedPassword,
+      columnNama: nama,
+      columnTelepon: telepon,
+    };
+    // Menggunakan conflictAlgorithm.fail akan melempar error jika email sudah ada
+    // yang akan kita tangkap di UI menggunakan try-catch.
+    return await db.insert(tableUsers, row,
+        conflictAlgorithm: ConflictAlgorithm.fail);
   }
 
-  // ==================================================================
-  // --- FUNGSI-FUNGSI UNTUK TABEL PROFIL ---
-  // ==================================================================
-  Future<int> insertProfile(Map<String, dynamic> row) async {
+  Future<Map<String, dynamic>?> login(String email, String password) async {
     Database db = await instance.database;
-    // Gunakan conflictAlgorithm.replace untuk menangani kasus update (jika id sudah ada, datanya diganti)
-    return await db.insert(tableProfiles, row,
-        conflictAlgorithm: ConflictAlgorithm.replace);
-  }
+    final hashedPassword = _hashPassword(password);
 
-  Future<Map<String, dynamic>?> queryProfile(String userId) async {
-    Database db = await instance.database;
-    List<Map<String, dynamic>> maps = await db.query(tableProfiles,
-        where: '$profileColumnId = ?', whereArgs: [userId]);
-    if (maps.isNotEmpty) {
-      return maps.first;
+    var res = await db.query(
+      tableUsers,
+      where: '$columnEmail = ? AND $columnPassword = ?',
+      whereArgs: [email, hashedPassword],
+    );
+
+    if (res.isNotEmpty) {
+      return res.first;
+    } else {
+      return null;
     }
-    return null;
   }
 
-  // ==================================================================
-  // --- FUNGSI-FUNGSI UNTUK TABEL BOOKING ---
-  // ==================================================================
-  Future<int> insertBooking(Map<String, dynamic> row) async {
+  // --- TAMBAHAN BARU DIMULAI DI SINI ---
+
+  // =======================================================
+  // == FUNGSI-FUNGSI PEMESANAN (BOOKINGS) ==
+  // =======================================================
+
+  /// Menambahkan data booking baru ke tabel bookings.
+  Future<int> addBooking(Map<String, dynamic> row) async {
     Database db = await instance.database;
     return await db.insert(tableBookings, row);
   }
 
-  Future<List<Map<String, dynamic>>> queryBookingsByUser(String userId) async {
+  /// Mengambil semua data booking dari database, diurutkan dari yang terbaru.
+  Future<List<Map<String, dynamic>>> getAllBookings() async {
     Database db = await instance.database;
-    return await db.query(tableBookings,
-        where: '$bookingColumnUserId = ?',
-        whereArgs: [userId],
-        orderBy: '$bookingColumnId DESC');
+    final List<Map<String, dynamic>> maps =
+        await db.query(tableBookings, orderBy: 'id DESC');
+    return maps;
   }
 
-  // ==================================================================
-  // --- FUNGSI LANJUTAN (JOIN) UNTUK HOMESCREEN ---
-  // ==================================================================
-  Future<List<Map<String, dynamic>>> queryAllBookingsWithDetails() async {
-    Database db = await instance.database;
+  // --- TAMBAHAN BARU SELESAI DI SINI ---
 
-    // Ini adalah query SQL mentah untuk menggabungkan 3 tabel
-    final String rawQuery = '''
-      SELECT
-        B.$bookingColumnId,
-        B.$bookingColumnStatus,
-        B.$bookingColumnStartDate,
-        P.$profileColumnFullName,
-        C.$favColumnBrand,
-        C.$favColumnModel
-      FROM $tableBookings AS B
-      JOIN $tableProfiles AS P ON B.$bookingColumnUserId = P.$profileColumnId
-      JOIN $tableFavorites AS C ON B.$bookingColumnCarId = C.$favColumnCarId
-      ORDER BY B.$bookingColumnStartDate DESC
-    ''';
+  // =======================================================
+  // == FUNGSI UNTUK DEBUGGING ==
+  // =======================================================
 
-    return await db.rawQuery(rawQuery);
+  /// Mencetak semua data di tabel 'users' ke konsol debug.
+  Future<void> printAllUsersForDebug() async {
+    try {
+      final db = await instance.database;
+      final allRows = await db.query(tableUsers);
+      print('----------- ISI TABEL USERS -----------');
+      if (allRows.isEmpty) {
+        print('Tabel users kosong.');
+      } else {
+        allRows.forEach((row) => print(row));
+      }
+      print('---------------------------------------');
+    } catch (e) {
+      print("Error saat membaca tabel users: $e");
+    }
   }
 }

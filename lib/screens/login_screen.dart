@@ -1,331 +1,249 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import ini untuk akses SharedPreferences
-import '../routes/app_routes.dart'; // Pastikan path ini benar
+import 'package:rentalmobil/database_helper.dart';
+import 'home_screen.dart'; // File halaman setelah login sukses
+import 'register_screen.dart'; // File halaman untuk daftar
 
-// Fungsi pembantu untuk membuat dekorasi titik-titik
-// Ditempatkan di luar kelas LoginScreen agar lebih modular.
-Widget _buildDots(Color color) {
-  return Row(
-    children: List.generate(
-      4,
-      (i) => Column(
-        children: List.generate(
-          4,
-          (j) => Container(
-            width: 7,
-            height: 7,
-            margin: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-// Mengubah LoginScreen menjadi StatefulWidget agar dapat mengelola state input dan loading
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Controllers untuk mengambil input dari TextField Email dan Password
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  // Variabel untuk menunjukkan apakah proses login sedang berlangsung
+  // =================================================================
+  // == BAGIAN LOGIKA (diambil dari kode lama Anda yang sudah benar) ==
+  // =================================================================
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   bool _isLoading = false;
+
+  void _login() async {
+    // Validasi form, jika input valid maka lanjutkan
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      String email = emailController.text;
+      String password = passwordController.text;
+
+      var user = await DatabaseHelper.instance.login(email, password);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Navigasi atau tampilkan error berdasarkan hasil dari database
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login Gagal! Email atau Password Salah.')),
+        );
+      }
+    }
+  }
 
   @override
   void dispose() {
-    // Penting: Bersihkan controllers saat widget dibuang untuk mencegah kebocoran memori
-    _emailController.dispose();
-    _passwordController.dispose();
+    // Selalu dispose controller untuk menghindari memory leak
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
-
-  // Fungsi yang akan dijalankan saat tombol "Sign in" ditekan
-  void _handleLogin() async {
-    // 1. Tampilkan indikator loading
-    setState(() {
-      _isLoading = true;
-    });
-
-    // 2. Ambil nilai email dan password dari TextField
-    final String emailInput = _emailController.text.trim();
-    final String passwordInput = _passwordController.text;
-
-    // 3. Validasi dasar: pastikan input tidak kosong
-    if (emailInput.isEmpty || passwordInput.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email dan kata sandi tidak boleh kosong!'),
-          backgroundColor: Colors.orange, // Warna warning
-        ),
-      );
-      setState(() {
-        _isLoading = false;
-      }); // Sembunyikan loading
-      return; // Hentikan proses
-    }
-
-    // 4. Ambil data yang tersimpan dari SharedPreferences
-    // Ini akan menjadi "database" lokal kita untuk contoh ini.
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? registeredEmail = prefs.getString('registered_email');
-    final String? registeredPassword = prefs.getString('registered_password');
-
-    // Untuk debugging, Anda bisa mencetak nilai yang diambil
-    print('Input Email: $emailInput, Input Password: $passwordInput');
-    print(
-        'Registered Email: $registeredEmail, Registered Password: $registeredPassword');
-
-    // 5. Simulasikan penundaan jaringan/proses autentikasi backend
-    await Future.delayed(const Duration(seconds: 2));
-
-    // 6. Sembunyikan indikator loading
-    setState(() {
-      _isLoading = false;
-    });
-
-    // 7. Verifikasi kredensial
-    if (emailInput == registeredEmail && passwordInput == registeredPassword) {
-      // Login berhasil: tampilkan pesan sukses dan navigasi ke halaman Home
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login berhasil! Selamat datang!'),
-          backgroundColor: Colors.green, // Warna sukses
-        ),
-      );
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
-    } else {
-      // Login gagal: tampilkan pesan error
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email atau kata sandi salah. Silakan coba lagi.'),
-          backgroundColor: Colors.red, // Warna error
-        ),
-      );
-    }
-  }
+  // ===============================================================
+  // == AKHIR DARI BAGIAN LOGIKA                                   ==
+  // ===============================================================
 
   @override
   Widget build(BuildContext context) {
+    // Gesture recognizer untuk membuat link "Sign up now" bisa diklik
+    final signUpRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RegisterScreen()),
+        );
+      };
+
+    // =================================================================
+    // == BAGIAN TAMPILAN (UI) (diambil dari desain Falah Rent Car)  ==
+    // =================================================================
     return Scaffold(
-      backgroundColor: const Color(0xFF0CB000),
-      body: Stack(
-        children: [
-          // Background green shapes
-          Positioned(
-            top: 80,
-            left: -60,
-            child: Transform.rotate(
-              angle: -0.3,
-              child: Container(
-                width: 320,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF158A1B).withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            // Background Hijau
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: const Color(0xff00A83B),
             ),
-          ),
-          // Dotted decorations
-          Positioned(
-            top: 40,
-            left: 30,
-            child: _buildDots(Colors.white.withOpacity(0.18)),
-          ),
-          Positioned(
-            top: 170,
-            right: 30,
-            child: _buildDots(Colors.white.withOpacity(0.18)),
-          ),
-          // Logo
-          Positioned(
-            top: 60,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                width: 170,
-                height: 170,
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 3),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                        'FALAH',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 32,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'RENT CAR',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 18,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // White card with form
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              constraints: const BoxConstraints(
-                minHeight: 320,
-                maxHeight: 400,
-              ),
-              margin: const EdgeInsets.only(
-                  top: 180, left: 16, right: 16, bottom: 0),
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Sign in to join',
-                    style: TextStyle(
-                      color: Color(0xFFBDBDBD),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  // Email TextField
-                  TextField(
-                    controller: _emailController, // Kaitkan controller
-                    keyboardType:
-                        TextInputType.emailAddress, // Keyboard tipe email
-                    decoration: InputDecoration(
-                      prefixIcon:
-                          Icon(Icons.email_outlined, color: Colors.grey[600]),
-                      hintText: 'Email Address',
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFFF7F7F7),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  // Password TextField
-                  TextField(
-                    controller: _passwordController, // Kaitkan controller
-                    obscureText: true, // Untuk menyembunyikan teks password
-                    decoration: InputDecoration(
-                      prefixIcon:
-                          Icon(Icons.lock_outline, color: Colors.grey[600]),
-                      hintText: 'Password',
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFFF7F7F7),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  // Sign in button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 44,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF181B3A),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        elevation: 4,
-                        shadowColor: Colors.black.withOpacity(0.15),
-                      ),
-                      onPressed: _isLoading
-                          ? null // Nonaktifkan tombol saat _isLoading true
-                          : _handleLogin, // Panggil fungsi _handleLogin
-                      child: _isLoading
-                          ? const CircularProgressIndicator(
-                              color:
-                                  Colors.white) // Tampilkan loading indicator
-                          : const Text(
-                              'Sign in',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  // Sign up link
-                  Center(
-                    child: Row(
+
+            // Konten utama
+            Column(
+              children: [
+                // Bagian Logo
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: Center(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          "Don't have an account yet? ",
-                          style: TextStyle(
-                            color: Color(0xFF757575),
-                            fontSize: 14,
+                        Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.white,
+                            child: Text('FALAH',
+                                style: TextStyle(
+                                    color: Color(0xff00A83B),
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold)),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            // Navigasi ke halaman Register
-                            Navigator.pushReplacementNamed(
-                                context, AppRoutes.register);
-                          },
-                          child: const Text(
-                            'Sign up now',
+                        const SizedBox(height: 8),
+                        const Text('RENT CAR',
                             style: TextStyle(
-                              color: Color(0xFF3F51B5),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                                color: Colors.white,
+                                fontSize: 16,
+                                letterSpacing: 2)),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Kartu Form Login
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32.0, vertical: 40.0),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(40)),
+                  ),
+                  // Menggunakan Form agar validator berjalan
+                  child: Form(
+                    key: _formKey, // Hubungkan dengan GlobalKey
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text('Sign in to join',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff333333))),
+                        const SizedBox(height: 30),
+
+                        // Text Field Email
+                        TextFormField(
+                          controller:
+                              emailController, // Hubungkan dengan controller
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            hintText: 'Email Address',
+                            prefixIcon: Icon(Icons.email_outlined,
+                                color: Colors.grey[400]),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none),
+                          ),
+                          validator: (value) =>
+                              (value == null || !value.contains('@'))
+                                  ? 'Masukkan email yang valid'
+                                  : null, // Hubungkan dengan validator
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Text Field Password
+                        TextFormField(
+                          controller:
+                              passwordController, // Hubungkan dengan controller
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: 'Password',
+                            prefixIcon: Icon(Icons.lock_outlined,
+                                color: Colors.grey[400]),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none),
+                          ),
+                          validator: (value) => (value == null || value.isEmpty)
+                              ? 'Password tidak boleh kosong'
+                              : null, // Hubungkan dengan validator
+                        ),
+                        const SizedBox(height: 30),
+
+                        // Tombol Sign In atau Loading Indicator
+                        _isLoading
+                            ? Center(child: CircularProgressIndicator())
+                            : ElevatedButton(
+                                onPressed:
+                                    _login, // Panggil fungsi _login saat ditekan
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xff1A237E),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30)),
+                                ),
+                                child: const Text('Sign In',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                              ),
+                        const SizedBox(height: 25),
+
+                        // Link Sign Up
+                        Center(
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 14),
+                              children: <TextSpan>[
+                                const TextSpan(
+                                    text: "Don't have an account yet? "),
+                                TextSpan(
+                                    text: 'Sign up now',
+                                    style: const TextStyle(
+                                        color: Color(0xff1A237E),
+                                        fontWeight: FontWeight.bold),
+                                    recognizer: signUpRecognizer),
+                              ],
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+                // Slogan di bagian paling bawah
+                Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.only(bottom: 20, top: 10),
+                  child: Center(
+                      child: Text('cepat, mudah dan solusi keluarga',
+                          style: TextStyle(
+                              color: Colors.grey[500], fontSize: 12))),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
